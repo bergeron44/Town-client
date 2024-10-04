@@ -1,38 +1,165 @@
-.App {
+/* Global Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f8ff;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+h1, h2, h3, p {
+  text-align: center;
+  color: #333;
+}
+
+/* Buttons */
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+/* Kahoot-style Login and Lobby Page */
+.login-page, .lobby-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+}
+
+.login-page h1, .lobby-page h1 {
+  font-size: 48px;
+  color: #4CAF50;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.login-page input[type="text"], .lobby-page input[type="text"] {
+  padding: 15px;
+  width: 100%;
+  max-width: 400px;
+  font-size: 18px;
+  margin: 20px 0;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.login-page input[type="text"]:focus, .lobby-page input[type="text"]:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  outline: none;
+}
+
+.lobby-page ul {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+  max-width: 600px;
+}
+
+.lobby-page li {
+  background-color: white;
+  margin: 10px 0;
+  padding: 15px;
+  font-size: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Game Stage Character Card */
+.character-card {
+  width: 300px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+  margin: 20px auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.character-card:hover {
+  transform: scale(1.05);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.character-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  border: 3px solid #4CAF50;
+}
+
+.character-card h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #4CAF50;
+}
+
+.character-card p {
+  font-size: 18px;
+  color: #777;
+}
+
+/* Voting Table */
+.voting-table {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  border-collapse: collapse;
+}
+
+.voting-table th, .voting-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.voting-table th {
+  background-color: #4CAF50;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.voting-table td {
+  background-color: #f9f9f9;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.voting-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Small Styling Enhancements */
+input::placeholder {
+  color: #aaa;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .login-page, .lobby-page {
+    padding: 20px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .character-card {
+    width: 90%;
   }
 }

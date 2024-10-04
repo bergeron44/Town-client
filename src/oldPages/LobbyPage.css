@@ -1,0 +1,16 @@
+.lobby-page {
+  text-align: center;
+  padding: 20px;
+}
+
+.players {
+  margin: 20px;
+}
+
+.player {
+  margin: 5px;
+}
+
+button {
+  margin-top: 20px;
+}

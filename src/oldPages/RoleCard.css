@@ -1,0 +1,14 @@
+.game-player-card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  text-align: center;
+}
+
+.role-image {
+  width: 50px; /* Adjust size as necessary */
+  height: 50px;
+  border-radius: 50%;
+}
