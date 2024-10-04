@@ -3,7 +3,7 @@ import GameCharacterCard from './GameCharacterCard';
 import DetctiveAnswer from './DetctiveAnswer'; // Import DetectiveAnswer component
 import io from 'socket.io-client';
 import Die from './Die';
-const socket = io('http://localhost:3001'); // Connect to your server
+const socket = io('https://town-server.onrender.com'); // Connect to your server
 
 function DayPhase({ character, nightResults, players, currentTurn, setGameState, gameCode, detectiveAnswer,setPhase,phase,setCurrentTurn }) {
   const [selectedPlayer, setSelectedPlayer] = useState(null);

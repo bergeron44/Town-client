@@ -11,7 +11,7 @@ import MutedPage from './components/MutedPage';  // New component
 import Die from './components/Die';  // New component
 import './App.css';
 
-const socket = io('http://localhost:3001', {
+const socket = io('https://town-server.onrender.com', {
   transports: ['websocket'],
 });
 
