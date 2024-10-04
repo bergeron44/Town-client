@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import { setGameCode, setCharacter, setPlayerName } from './redux/action';
-import Lobby from './components/Lobby';
 import LobbyDisplay from './components/LobbyDisplay';
 import NightPhase from './components/NightPhase';
 import DayPhase from './components/DayPhase';
@@ -12,7 +11,7 @@ import MutedPage from './components/MutedPage';  // New component
 import Die from './components/Die';  // New component
 import './App.css';
 
-const socket = io('https://town-server.onrender.com', {
+const socket = io('http://localhost:3001', {
   transports: ['websocket'],
 });
 
@@ -34,6 +33,8 @@ function App() {
   const [currentTurn, setCurrentTurn] = useState(null);
   const [nightResults, setNightResults] = useState(null);
   const [detectiveAnswer, setDetctiveAnswer] = useState(false);
+  const [phase, setPhase] = useState('waiting'); 
+
 
   useEffect(() => {
     console.log('Setting up socket listeners...');
@@ -55,7 +56,8 @@ function App() {
     });
     socket.on('gameStarted', ({ players,role,gameCode }) => {
       dispatch(setCharacter(role));
-      console.log('Role assigned:', role);
+      setPhase('roleAction');
+      console.log('roleAction phase update and Role assigned:', role);
       setPlayers(players);
       if (role === 'Killer' ) {
         console.log('Killer game started.');
@@ -71,6 +73,8 @@ function App() {
     socket.on('gameResume', ({ players,role,gameCode }) => {
       console.log('game resume');
       console.log('Role :', role);
+      setPhase('roleAction');
+      setCurrentTurn('Killer');
       setPlayers(players);
       if (role === 'Killer' ) {
         console.log('Killer game started.');
@@ -81,7 +85,7 @@ function App() {
         setGameState('night');
       }
 
-      console.log('Game started. Transitioning to night phase.');
+      console.log('Game resume go night phase.');
     });
     socket.on('killerTurn', () => {
       console.log(character);
@@ -90,17 +94,44 @@ function App() {
       setGameState('day');
     });
     socket.on('doctorTurn', () => {
-      console.log(character);
-      setCurrentTurn('Doctor');
       console.log('Current turn: Doctor');
-      setGameState('day');
+      console.log(isAlive);
+      console.log(phase);
+      if(!isAlive|| phase==='die')
+      {
+        console.log('Doctor is dead moving next player');
+        socket.emit('roleAction', {
+          gameCode: gameCode,
+          targetId: '0',
+          role: character,
+        });
+      }
+      else
+      {
+        console.log(character);
+        setCurrentTurn('Doctor'); 
+        setGameState('day');
+      }
+     
     });
     socket.on('detectiveTurn', () => {
-      console.log(character);
-      console.log("i am started detective turn :");
-      setCurrentTurn('Detective');
       console.log('Current turn: detective');
-      setGameState('day');
+      if(!isAlive|| phase==='die')
+        {
+          console.log('detective is dead moving next player');
+          socket.emit('roleAction', {
+            gameCode: gameCode,
+            targetId: '0',
+            role: character,
+          });
+        }
+        else
+        {
+          console.log(character);
+          console.log("i am started detective turn :");
+          setCurrentTurn('Detective');
+          setGameState('day');
+        }
     });
     socket.on('detectiveResult', ({isKiller}) => {
       console.log(character);
@@ -112,18 +143,44 @@ function App() {
       setGameState('day'); 
     });
     socket.on('policemanTurn', () => {
-      console.log(character);
-      console.log("i am started policeman turn :");
-      setCurrentTurn('Policeman');
       console.log('Current turn: policeman');
-      setGameState('day');
+      if(!isAlive|| phase==='die')
+        {
+          console.log('policeman is dead moving next player');
+          socket.emit('roleAction', {
+            gameCode: gameCode,
+            targetId: '0',
+            role: character,
+          });
+        }
+        else
+        {
+          console.log(character);
+          console.log("i am started policeman turn :");
+          setCurrentTurn('Policeman');
+          setGameState('day');
+        }
+     
     });
     socket.on('lawyerTurn', () => {
-      console.log(character);
-      console.log("i am started lawywr turn :");
-      setCurrentTurn('Lawyer');
       console.log('Current turn: lawyer');
-      setGameState('day');
+      if(!isAlive|| phase==='die')
+        {
+          console.log('lawyer is dead moving next player');
+          socket.emit('roleAction', {
+            gameCode: gameCode,
+            targetId: '0',
+            role: character,
+          });
+        }
+        else
+        {
+          console.log(character);
+          console.log("i am started lawywr turn :");
+          setCurrentTurn('Lawyer');
+          setGameState('day');
+        }
+     
     });
 
     // NEW SOCKET EVENTS FOR KILLER WON AND MUTED
@@ -138,7 +195,7 @@ function App() {
     socket.on('die', () => {
       setGameState('die');
       setCurrentTurn('die');
-      alert("bye bye muder fucker");
+      setPhase('die');
       console.log('you are dead');
     });
     socket.on('muted', () => {
@@ -150,7 +207,7 @@ function App() {
       if (eliminatedPlayerName) {
         setNightResults(eliminatedPlayerName);
         // Update the players list to remove the eliminated player
-        setPlayers((prevPlayers) => prevPlayers.filter(player => player.name !== eliminatedPlayerName));
+        setPlayers((prevPlayers) => prevPlayers.filter(player => player.id !== eliminatedPlayerName));
         console.log(`${eliminatedPlayerName} has been eliminated. Updated players list:`, players);
       }
       setCurrentTurn('voting');
@@ -226,8 +283,11 @@ function App() {
     }
     if (gameState === 'day') {
       return <DayPhase
+      phase={phase}
       gameCode={gameCode}
+      setPhase={setPhase}
       setGameState={setGameState}
+      setCurrentTurn={setCurrentTurn}
       players={players}
       character={character}
       nickname={playerName} 
@@ -246,7 +306,9 @@ function App() {
       return <MutedPage />; // Render muted page
     }
     if (gameState === 'die') {
-      return <Die />; // Render muted page
+      return <Die 
+      setGameState={setGameState}
+      setCurrentTurn={setCurrentTurn}/>; // Render muted page
     }
 
     return null;

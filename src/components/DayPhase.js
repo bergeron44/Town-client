@@ -2,19 +2,28 @@ import React, { useState, useEffect } from 'react';
 import GameCharacterCard from './GameCharacterCard';
 import DetctiveAnswer from './DetctiveAnswer'; // Import DetectiveAnswer component
 import io from 'socket.io-client';
+import Die from './Die';
+const socket = io('http://localhost:3001'); // Connect to your server
 
-const socket = io('https://town-server.onrender.com'); // Connect to your server
-
-function DayPhase({ character, nightResults, players, currentTurn, setGameState, gameCode, detectiveAnswer }) {
+function DayPhase({ character, nightResults, players, currentTurn, setGameState, gameCode, detectiveAnswer,setPhase,phase,setCurrentTurn }) {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [phase, setPhase] = useState('roleAction'); // Default to 'roleAction' phase
   const [showDetectiveAnswer, setShowDetectiveAnswer] = useState(false); // State to control DetectiveAnswer display
 
   useEffect(() => {
+    console.log(phase);
+    console.log(currentTurn);
     if (currentTurn === 'voting') {
       setPhase('voting'); // Transition to voting phase
+    } 
+    if(phase==='die')
+    {
+      socket.emit('roleAction', {
+        gameCode: gameCode,
+        targetId: '0',
+        role: character,
+      });
     }
-  }, [currentTurn]);
+  }, [currentTurn,phase]);
 
   useEffect(() => {
     // Show DetectiveAnswer only when the currentTurn is "detectiveAnswer" and detectiveAnswer is not null
@@ -37,7 +46,8 @@ function DayPhase({ character, nightResults, players, currentTurn, setGameState,
       votedPlayer:player.id,
       gameCode: gameCode,
     });
-    setPhase('waiting'); // Waiting for all players to finish voting
+    setCurrentTurn('Killer')
+    setPhase('waiting'); 
   };
 
   return (
@@ -99,6 +109,14 @@ function DayPhase({ character, nightResults, players, currentTurn, setGameState,
           {phase === 'waiting' && (
             <div>
               <h3>Waiting for other players...</h3>
+            </div>
+          )}
+
+{phase === 'die' && (
+            <div>
+               <Die 
+      setGameState={setGameState}
+      setCurrentTurn={setCurrentTurn}/>;
             </div>
           )}
         </>
